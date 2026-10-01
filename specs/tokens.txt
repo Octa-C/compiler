@@ -1,0 +1,79 @@
+FOR
+DO
+UNTIL
+CONTINUE
+FUNCTION
+RETURN
+IF
+ELSE
+ELSEIF
+CASEOF
+CASE
+DEFAULT
+AND
+OR
+NOT
+IS
+IN
+BREAK
+
+SCALAR
+  - i64
+  - i32
+  - i16
+  - f64
+  - f32
+  - f16
+  - bool
+VECTOR
+MATRIX
+STRING
+
+LBRACE
+RBRACE
+LPAREN
+RPAREN
+LBRACKET
+RBRACKET
+SEMICOLON
+ARROW
+COMMA
+ELLIPSIS
+COLON
+
+PLUSMINUS
+  - +
+  - -
+STAR_SLASH_MOD
+  - *
+  - /
+  - %
+TRANSPOSE
+DOT_STAR
+DOT_SLASH
+LESS
+GREATER
+LESS_EQ
+GREATER_EQ
+ASSIGNMENT
+  - =
+  - +=
+  - -=
+  - *=
+  - /=
+
+IDENTIFIER
+  - [a-zA-Z][a-zA-Z0-9_]*
+BOOL
+  - 1
+  - 0
+INT
+  - [0-9]+
+FLOAT
+  - [0-9]+\.[0-9]+
+  - [0-9]+(\.[0-9]+)?[eE][+-]?[0-9]+
+STRING_LIT
+  - "[^"\n]*"
+
+COMPILER_EOF
+COMPILER_ERROR
