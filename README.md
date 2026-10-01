@@ -1,8 +1,6 @@
 <div align="center">
   <img alt="The OctaC logo" src="assets/logo.svg" width="25%">
 
-# OctaC
-
 A statically typed, C-structured language for numerical and matrix computation.
 
 [Documentation] | [Getting started] | [Lexer] | [Contributing]
