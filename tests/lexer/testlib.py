@@ -18,7 +18,7 @@ from itertools import zip_longest
 from pathlib import Path
 
 TESTS_DIR = Path(__file__).resolve().parent
-ROOT = TESTS_DIR.parent
+ROOT = TESTS_DIR.parents[1]
 CASES_DIR = TESTS_DIR / "cases"
 EXPECTED_DIR = TESTS_DIR / "expected"
 DEFAULT_LEXER = ROOT / "build" / ("lexer.exe" if sys.platform == "win32" else "lexer")

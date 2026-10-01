@@ -56,10 +56,10 @@ Token Scanner::next() {
         TokenType type;
         switch (ACTION[lastAccept]) {
             case A_WORD:   type = lookupKeyword(lexeme);    break;
-            case A_INT:    type = CONSTANTS_INT_LITERAL;    break;
-            case A_FLOAT:  type = CONSTANTS_FLOAT_LITERAL;  break;
+            case A_INT:    type = INT;    break;
+            case A_FLOAT:  type = FLOAT;  break;
             case A_OP:     type = lookupOperator(lexeme);   break;
-            case A_STRING: type = CONSTANTS_STRING_LITERAL; break;
+            case A_STRING: type = STRING_LIT; break;
             case A_SKIP:   continue;      
             default:       type = COMPILER_ERROR; break;    
         }

@@ -54,10 +54,10 @@ enum Action
 {
     A_NONE,   // not an accepting state, go back to last accepting state
     A_WORD,   // lookupKeyword(lexeme), falls back to IDENTIFIER
-    A_INT,    // CONSTANTS_INT_LITERAL
-    A_FLOAT,  // CONSTANTS_FLOAT_LITERAL
+    A_INT,    // INT
+    A_FLOAT,  // FLOAT
     A_OP,     // lookupOperator(lexeme)
-    A_STRING, // CONSTANTS_STRING_LITERAL
+    A_STRING, // STRING_LIT
     A_SKIP    // whitespace: discard, scan again
 };
 
