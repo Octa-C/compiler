@@ -48,18 +48,20 @@ Requires `g++`, `make` and Python 3.
 
 ```sh
 make
-build/lexer tests/lexer/cases/sample.oc
+build/octacc --emit-tokens tests/lexer/cases/sample.oc
 ```
 
-Each token is printed as `<TYPE, value>`, one per line, ending with
-`<COMPILER_EOF,>`. See the [lexer README](lexer/README.md) for the output
-format, error reporting and how the DFA works.
+`--emit-tokens` stops after lexical analysis and prints each token as
+`<TYPE, value>`, one per line, ending with `<COMPILER_EOF,>`. See the
+[lexer README](lexer/README.md) for the output format, error reporting and how
+the DFA works. Run `build/octacc --help` for every option.
 
 ## Building and Testing
 
 ```sh
-make            # builds build/lexer
+make            # builds build/octacc
 make test       # builds, then runs the pytest suite
+make format     # formats the sources with clang-format
 make clean      # removes build/
 ```
 
@@ -78,22 +80,31 @@ python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 ├── assets/
 ├── lexer
 │   ├── include
-│   │   ├── dfa.hpp                   # CharClass, State, Action enums and table declarations
+│   │   ├── dfa.hpp                   # CharClass, State and Action enums, DFA lookups
 │   │   ├── scanner.hpp               # Scanner class
 │   │   └── token.hpp                 # TokenType enum, Token struct, lookup declarations
 │   ├── src
-│   │   ├── dfa.cpp                   # character classes, TRANSITION and ACTION tables
+│   │   ├── dfa.cpp                   # character classes and the transition table
 │   │   ├── scanner.cpp               # the scanning loop and line/column tracking
 │   │   └── token.cpp                 # token names, keyword and operator lookup tables
-│   ├── main.cpp                      # command line driver and --dump-table
-│   └── README.md                     # lexer usage, output format and DFA design
+│   └── README.md                     # lexer output format and DFA design
 ├── specs
 │   └── tokens.txt                    # the token set, source of truth for the lexer
 ├── tests
-│   └── lexer/
+│   ├── driver/                       # command line tests
+│   └── lexer/                        # token stream and diagnostics tests
+├── utils
+│   ├── include
+│   │   ├── arg_parser.hpp            # ArgParser, a command line parser
+│   │   ├── diagnostics.hpp           # DiagnosticReporter, coloured error output
+│   │   ├── file_io.hpp               # readFile
+│   │   └── terminal.hpp              # colour detection for standard error
+│   └── src/
+├── .clang-format                     # formatting rules, applied by make format
 ├── CONTRIBUTING.md                   # how to contribute
-├── Makefile                          # builds build/lexer, runs the tests
+├── Makefile                          # builds build/octacc, runs the tests
 ├── README.md
+├── main.cpp                          # the compiler driver
 └── requirements.txt                  # Python packages for the tests
 ```
 

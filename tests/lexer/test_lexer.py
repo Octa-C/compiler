@@ -45,7 +45,7 @@ def fail(problems, verbose):
 
 
 @pytest.mark.parametrize("case", CASES, ids=[p.stem for p in CASES])
-def test_lexer(case, lexer, request):
+def test_lexer(case, compiler, request):
     verbose = request.config.getoption("verbose") > 0
     tokens_file = expected_tokens_path(case.stem)
     stderr_file = expected_stderr_path(case.stem)
@@ -54,12 +54,13 @@ def test_lexer(case, lexer, request):
 
     exp_tokens, _ = parse_tokens(read_lines(tokens_file))
     exp_stderr = read_lines(stderr_file) if stderr_file.exists() else []
-    code, out, err = run_lexer(lexer, case)
+    code, out, err = run_lexer(compiler, case)
     act_tokens, act_malformed = parse_tokens(out)
 
     problems = []  # (heading, [lines])
-    if code != 0:
-        problems.append(("lexer exit status", [f"exited with {code}"]))
+    want_code = 1 if exp_stderr else 0
+    if code != want_code:
+        problems.append(("lexer exit status", [f"expected {want_code}, exited with {code}"]))
     if act_malformed:
         problems.append(
             ("lexer output that is not a token", [f"line {n}: {t!r}" for n, t in act_malformed])

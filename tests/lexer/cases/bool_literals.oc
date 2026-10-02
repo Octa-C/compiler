@@ -1,0 +1,5 @@
+bool a = true;
+bool b = false;
+bool truex = true;
+i32 falsey = 0;
+bool False = true;

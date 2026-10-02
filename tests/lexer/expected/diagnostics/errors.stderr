@@ -1,9 +1,27 @@
 errors.oc:1:5: error: unrecognized lexeme '_'
+ 1 | i32 _hidden = 1;
+   |     ^
 errors.oc:2:10: error: unrecognized lexeme '.'
+ 2 | f32 x = 1.;
+   |          ^
 errors.oc:3:10: error: unrecognized lexeme '..'
+ 3 | i32 y = 3..4;
+   |          ^~
 errors.oc:4:12: error: unrecognized lexeme '"unterminated'
+ 4 | string s = "unterminated
+   |            ^~~~~~~~~~~~~
 errors.oc:5:11: error: unrecognized lexeme '@'
+ 5 | i32 z = a @ b;
+   |           ^
 errors.oc:6:12: error: unrecognized lexeme '!'
+ 6 | bool w = a != b;
+   |            ^
 errors.oc:7:12: error: unrecognized lexeme '.'
+ 7 | f32 q = 1.5.2;
+   |            ^
 errors.oc:8:23: error: unrecognized lexeme '.'
+ 8 | vector<f32> v = [1.0, .5];
+   |                       ^
 errors.oc:9:19: error: unrecognized lexeme '.'
+ 9 | matrix<f32> M = A .+ B;
+   |                   ^

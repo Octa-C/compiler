@@ -1,163 +1,160 @@
-// token.cpp
 #include "token.hpp"
+
+#include <ostream>
 #include <unordered_map>
 
-static const char *Names[] = {
-    "FOR",
-    "DO",
-    "UNTIL",
-    "CONTINUE",
-    "FUNCTION",
-    "RETURN",
-    "IF",
-    "ELSE",
-    "ELSEIF",
-    "CASEOF",
-    "CASE",
-    "DEFAULT",
-    "AND",
-    "OR",
-    "NOT",
-    "IS",
-    "IN",
-    "BREAK",
-    "SCALAR",
-    "VECTOR",
-    "MATRIX",
-    "STRING",
-    "LBRACE",
-    "RBRACE",
-    "LPAREN",
-    "RPAREN",
-    "LBRACKET",
-    "RBRACKET",
-    "SEMICOLON",
-    "ARROW",
-    "COMMA",
-    "ELLIPSIS",
-    "COLON",
-    "PLUSMINUS",
-    "STAR_SLASH_MOD",
-    "TRANSPOSE",
-    "DOT_STAR",
-    "DOT_SLASH",
-    "LESS",
-    "GREATER",
-    "LESS_EQ",
-    "GREATER_EQ",
-    "ASSIGNMENT",
-    "IDENTIFIER",
-    "BOOL",
-    "INT",
-    "FLOAT",
-    "STRING_LIT",
-    "COMPILER_EOF",
-    "COMPILER_ERROR",
-};
+namespace octac::lexer {
 
+    namespace {
 
-static_assert(sizeof(Names) / sizeof(Names[0]) == NUM_TOKEN_TYPES,
-              "Names[] is out of sync with enum TokenType");
-              
-static const std::unordered_map<std::string, TokenType> KEYWORDS = {
-    {"for", FOR},
-    {"do", DO},
-    {"until", UNTIL},
-    {"continue", CONTINUE},
-    {"function", FUNCTION},
-    {"return", RETURN},
-    {"if", IF},
-    {"else", ELSE},
-    {"elseif", ELSEIF},
-    {"caseof", CASEOF},
-    {"case", CASE},
-    {"default", DEFAULT},
-    {"and", AND},
-    {"or", OR},
-    {"not", NOT},
-    {"is", IS},
-    {"in", IN},
-    {"break", BREAK},
+        const std::unordered_map<std::string, TokenType> kKeywords = {
+            {"for", TokenType::For},
+            {"do", TokenType::Do},
+            {"until", TokenType::Until},
+            {"continue", TokenType::Continue},
+            {"function", TokenType::Function},
+            {"return", TokenType::Return},
+            {"if", TokenType::If},
+            {"else", TokenType::Else},
+            {"elseif", TokenType::ElseIf},
+            {"caseof", TokenType::CaseOf},
+            {"case", TokenType::Case},
+            {"default", TokenType::Default},
+            {"and", TokenType::And},
+            {"or", TokenType::Or},
+            {"not", TokenType::Not},
+            {"is", TokenType::Is},
+            {"in", TokenType::In},
+            {"break", TokenType::Break},
 
-    {"i64", SCALAR},
-    {"i32", SCALAR},
-    {"i16", SCALAR},
-    {"f64", SCALAR},
-    {"f32", SCALAR},
-    {"f16", SCALAR},
-    {"bool", SCALAR},
+            {"i64", TokenType::Scalar},
+            {"i32", TokenType::Scalar},
+            {"i16", TokenType::Scalar},
+            {"f64", TokenType::Scalar},
+            {"f32", TokenType::Scalar},
+            {"f16", TokenType::Scalar},
+            {"bool", TokenType::Scalar},
 
-    {"vector", VECTOR},
-    {"matrix", MATRIX},
-    {"string", STRING},
-};
+            {"vector", TokenType::Vector},
+            {"matrix", TokenType::Matrix},
+            {"string", TokenType::String},
 
-static const std::unordered_map<std::string, TokenType> OPERATORS = {
-    {"{", LBRACE},
-    {"}", RBRACE},
-    {"(", LPAREN},
-    {")", RPAREN},
-    {"[", LBRACKET},
-    {"]", RBRACKET},
-    {";", SEMICOLON},
-    {"->", ARROW},
-    {",", COMMA},
-    {"...", ELLIPSIS},
-    {":", COLON},
+            {"true", TokenType::BoolLit},
+            {"false", TokenType::BoolLit},
+        };
 
-    {"+", PLUSMINUS},
-    {"-", PLUSMINUS},
-    {"*", STAR_SLASH_MOD},
-    {"/", STAR_SLASH_MOD},
-    {"%", STAR_SLASH_MOD},
+        const std::unordered_map<std::string, TokenType> kOperators = {
+            {"{", TokenType::LBrace},       {"}", TokenType::RBrace},
+            {"(", TokenType::LParen},       {")", TokenType::RParen},
+            {"[", TokenType::LBracket},     {"]", TokenType::RBracket},
+            {";", TokenType::Semicolon},    {"->", TokenType::Arrow},
+            {",", TokenType::Comma},        {"...", TokenType::Ellipsis},
+            {":", TokenType::Colon},
 
-    {"'", TRANSPOSE},
-    {".*", DOT_STAR},
-    {"./", DOT_SLASH},
+            {"+", TokenType::PlusMinus},    {"-", TokenType::PlusMinus},
+            {"*", TokenType::StarSlashMod}, {"/", TokenType::StarSlashMod},
+            {"%", TokenType::StarSlashMod},
 
-    {"<", LESS},
-    {">", GREATER},
-    {"<=", LESS_EQ},
-    {">=", GREATER_EQ},
+            {"'", TokenType::Transpose},    {".*", TokenType::DotStar},
+            {"./", TokenType::DotSlash},
 
-    {"=",   ASSIGNMENT},
-    {"+=",  ASSIGNMENT},
-    {"-=",  ASSIGNMENT},
-    {"*=",  ASSIGNMENT},
-    {"/=",  ASSIGNMENT},
+            {"<", TokenType::Less},         {">", TokenType::Greater},
+            {"<=", TokenType::LessEq},      {">=", TokenType::GreaterEq},
 
-};
+            {"=", TokenType::Assignment},   {"+=", TokenType::Assignment},
+            {"-=", TokenType::Assignment},  {"*=", TokenType::Assignment},
+            {"/=", TokenType::Assignment},
+        };
 
-const char *tokenTypeName(TokenType type)
-{
-    return Names[type];
-}
+    }  // namespace
 
-TokenType lookupKeyword(const std::string &lexeme)
-{
-    auto it = KEYWORDS.find(lexeme);
-    return it == KEYWORDS.end() ? IDENTIFIER : it->second;
-}
-
-TokenType lookupOperator(const std::string &lexeme)
-{
-    auto it = OPERATORS.find(lexeme);
-    return it == OPERATORS.end() ? COMPILER_ERROR : it->second;
-}
-
-bool hasValuePart(TokenType type)
-{
-    switch (type) {
-        case IDENTIFIER:
-        case INT:
-        case FLOAT:
-        case STRING_LIT:
-        case SCALAR:
-        case ASSIGNMENT:
-        case PLUSMINUS:
-        case STAR_SLASH_MOD:
-            return true;
-        default:
-            return false;
+    const char *tokenTypeName(TokenType type) {
+        switch (type) {
+        case TokenType::For:           return "FOR";
+        case TokenType::Do:            return "DO";
+        case TokenType::Until:         return "UNTIL";
+        case TokenType::Continue:      return "CONTINUE";
+        case TokenType::Function:      return "FUNCTION";
+        case TokenType::Return:        return "RETURN";
+        case TokenType::If:            return "IF";
+        case TokenType::Else:          return "ELSE";
+        case TokenType::ElseIf:        return "ELSEIF";
+        case TokenType::CaseOf:        return "CASEOF";
+        case TokenType::Case:          return "CASE";
+        case TokenType::Default:       return "DEFAULT";
+        case TokenType::And:           return "AND";
+        case TokenType::Or:            return "OR";
+        case TokenType::Not:           return "NOT";
+        case TokenType::Is:            return "IS";
+        case TokenType::In:            return "IN";
+        case TokenType::Break:         return "BREAK";
+        case TokenType::Scalar:        return "SCALAR";
+        case TokenType::Vector:        return "VECTOR";
+        case TokenType::Matrix:        return "MATRIX";
+        case TokenType::String:        return "STRING";
+        case TokenType::LBrace:        return "LBRACE";
+        case TokenType::RBrace:        return "RBRACE";
+        case TokenType::LParen:        return "LPAREN";
+        case TokenType::RParen:        return "RPAREN";
+        case TokenType::LBracket:      return "LBRACKET";
+        case TokenType::RBracket:      return "RBRACKET";
+        case TokenType::Semicolon:     return "SEMICOLON";
+        case TokenType::Arrow:         return "ARROW";
+        case TokenType::Comma:         return "COMMA";
+        case TokenType::Ellipsis:      return "ELLIPSIS";
+        case TokenType::Colon:         return "COLON";
+        case TokenType::PlusMinus:     return "PLUSMINUS";
+        case TokenType::StarSlashMod:  return "STAR_SLASH_MOD";
+        case TokenType::Transpose:     return "TRANSPOSE";
+        case TokenType::DotStar:       return "DOT_STAR";
+        case TokenType::DotSlash:      return "DOT_SLASH";
+        case TokenType::Less:          return "LESS";
+        case TokenType::Greater:       return "GREATER";
+        case TokenType::LessEq:        return "LESS_EQ";
+        case TokenType::GreaterEq:     return "GREATER_EQ";
+        case TokenType::Assignment:    return "ASSIGNMENT";
+        case TokenType::Identifier:    return "IDENTIFIER";
+        case TokenType::BoolLit:       return "BOOL_LIT";
+        case TokenType::Int:           return "INT";
+        case TokenType::Float:         return "FLOAT";
+        case TokenType::StringLit:     return "STRING_LIT";
+        case TokenType::CompilerEof:   return "COMPILER_EOF";
+        case TokenType::CompilerError: return "COMPILER_ERROR";
+        }
+        return "UNKNOWN";
     }
-}
+
+    TokenType lookupKeyword(const std::string &lexeme) {
+        const auto it = kKeywords.find(lexeme);
+        return it == kKeywords.end() ? TokenType::Identifier : it->second;
+    }
+
+    TokenType lookupOperator(const std::string &lexeme) {
+        const auto it = kOperators.find(lexeme);
+        return it == kOperators.end() ? TokenType::CompilerError : it->second;
+    }
+
+    bool hasValuePart(TokenType type) {
+        switch (type) {
+        case TokenType::Identifier:
+        case TokenType::BoolLit:
+        case TokenType::Int:
+        case TokenType::Float:
+        case TokenType::StringLit:
+        case TokenType::Scalar:
+        case TokenType::Assignment:
+        case TokenType::PlusMinus:
+        case TokenType::StarSlashMod: return true;
+        default:                      return false;
+        }
+    }
+
+    std::ostream &operator<<(std::ostream &out, const Token &token) {
+        out << '<' << tokenTypeName(token.type) << ',';
+        if (hasValuePart(token.type)) {
+            out << ' ' << token.value;
+        }
+        return out << '>';
+    }
+
+}  // namespace octac::lexer

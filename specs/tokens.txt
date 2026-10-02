@@ -64,9 +64,9 @@ ASSIGNMENT
 
 IDENTIFIER
   - [a-zA-Z][a-zA-Z0-9_]*
-BOOL
-  - 1
-  - 0
+BOOL_LIT
+  - true
+  - false
 INT
   - [0-9]+
 FLOAT

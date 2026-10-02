@@ -12,16 +12,13 @@ Note: This file was written by Claude (Anthropic)
 import difflib
 import re
 import subprocess
-import sys
 from collections import namedtuple
 from itertools import zip_longest
 from pathlib import Path
 
 TESTS_DIR = Path(__file__).resolve().parent
-ROOT = TESTS_DIR.parents[1]
 CASES_DIR = TESTS_DIR / "cases"
 EXPECTED_DIR = TESTS_DIR / "expected"
-DEFAULT_LEXER = ROOT / "build" / ("lexer.exe" if sys.platform == "win32" else "lexer")
 
 # line is the 1-based line the token was read from
 Token = namedtuple("Token", "type value line")
@@ -55,15 +52,15 @@ def format_token(token):
     return f"<{token.type}, {token.value}>"
 
 
-def run_lexer(lexer, case_path):
+def run_lexer(compiler, case_path):
     """
-    Run the lexer on a case from inside its directory.
+    Run the compiler up to lexical analysis on a case, from inside its directory.
 
     The file is passed by bare name so diagnostics read "name.oc:line:col: ...".
     Returns (exit code, stdout lines, stderr lines).
     """
     proc = subprocess.run(
-        [str(lexer), case_path.name],
+        [str(compiler), "--emit-tokens", case_path.name],
         cwd=case_path.parent,
         capture_output=True,
         text=True,

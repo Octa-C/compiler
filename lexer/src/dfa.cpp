@@ -1,146 +1,160 @@
-// dfa.cpp
 #include "dfa.hpp"
 
-CharClass charClassOf(unsigned char c)
-{
-    static CharClass table[256];
-    static bool built = false;
+#include <array>
+#include <initializer_list>
 
-    if (!built)
-    {
-        for (int i = 0; i < 256; ++i)
-        {
-            table[i] = CC_OTHER;
-        }
-        for (int i = 'a'; i <= 'z'; ++i)
-        {
-            table[i] = CC_LETTER;
-        }
-        for (int i = 'A'; i <= 'Z'; ++i)
-        {
-            table[i] = CC_LETTER;
-        }
-        table['e'] = CC_EXP;
-        table['E'] = CC_EXP;
+namespace octac::lexer {
 
-        for (int i = '0'; i <= '9'; ++i)
-        {
-            table[i] = CC_DIGIT;
-        }
-        table['_'] = CC_UNDERSCORE;
-        table[' '] = CC_WS;
-        table['\t'] = CC_WS;
-        table['\r'] = CC_WS;
-        table['\f'] = CC_WS;
-        table['\v'] = CC_WS;
-        table['\n'] = CC_NEWLINE;
-        table['"'] = CC_QUOTE;
-        table['.'] = CC_DOT;
-        table['-'] = CC_MINUS;
-        table['<'] = CC_LT;
-        table['>'] = CC_GT;
-        table['='] = CC_EQ;
-        table['+'] = CC_PLUS;
-        table['-'] = CC_MINUS;
-        table['*'] = CC_STAR;
-        table['/'] = CC_SLASH;
-        for (const char *p = "{}()[];,:%'"; *p; p++)
-            table[(unsigned char)*p] = CC_SIMPLE;
+    namespace {
 
-        built = true;
+        using ClassTable = std::array<CharClass, 256>;
+        using TransitionTable = std::array<std::array<State, kNumCharClasses>, kNumStates>;
+
+        constexpr std::size_t index(CharClass c) {
+            return static_cast<std::size_t>(c);
+        }
+
+        constexpr std::size_t index(State s) {
+            return static_cast<std::size_t>(s);
+        }
+
+        constexpr ClassTable buildClassTable() {
+            ClassTable table{};
+            for (CharClass &entry : table) {
+                entry = CharClass::Other;
+            }
+            for (char c = 'a'; c <= 'z'; ++c) {
+                table[static_cast<unsigned char>(c)] = CharClass::Letter;
+            }
+            for (char c = 'A'; c <= 'Z'; ++c) {
+                table[static_cast<unsigned char>(c)] = CharClass::Letter;
+            }
+            for (char c = '0'; c <= '9'; ++c) {
+                table[static_cast<unsigned char>(c)] = CharClass::Digit;
+            }
+            table['e'] = CharClass::Exp;
+            table['E'] = CharClass::Exp;
+            table['_'] = CharClass::Underscore;
+
+            for (char c : {' ', '\t', '\r', '\f', '\v'}) {
+                table[static_cast<unsigned char>(c)] = CharClass::Whitespace;
+            }
+            table['\n'] = CharClass::Newline;
+
+            table['"'] = CharClass::Quote;
+            table['.'] = CharClass::Dot;
+            table['+'] = CharClass::Plus;
+            table['-'] = CharClass::Minus;
+            table['*'] = CharClass::Star;
+            table['/'] = CharClass::Slash;
+            table['<'] = CharClass::Less;
+            table['>'] = CharClass::Greater;
+            table['='] = CharClass::Equal;
+
+            for (char c : {'{', '}', '(', ')', '[', ']', ';', ',', ':', '%', '\''}) {
+                table[static_cast<unsigned char>(c)] = CharClass::Simple;
+            }
+            return table;
+        }
+
+        constexpr TransitionTable buildTransitionTable() {
+            TransitionTable table{};  // every entry starts as State::Dead
+            for (auto &row : table) {
+                for (State &entry : row) {
+                    entry = State::Dead;
+                }
+            }
+
+            auto on = [&table](State from, std::initializer_list<CharClass> classes, State to) {
+                for (CharClass c : classes) {
+                    table[index(from)][index(c)] = to;
+                }
+            };
+
+            using C = CharClass;
+            using S = State;
+
+            on(S::Start, {C::Letter, C::Exp}, S::Ident);
+            on(S::Start, {C::Digit}, S::Int);
+            on(S::Start, {C::Whitespace, C::Newline}, S::Ws);
+            on(S::Start, {C::Quote}, S::StrBody);
+            on(S::Start, {C::Dot}, S::Dot);
+            on(S::Start, {C::Plus, C::Star, C::Less, C::Greater}, S::OpEq);
+            on(S::Start, {C::Minus}, S::Minus);
+            on(S::Start, {C::Slash}, S::Slash);
+            on(S::Start, {C::Equal, C::Simple}, S::OpDone);
+
+            on(S::Ident, {C::Letter, C::Exp, C::Digit, C::Underscore}, S::Ident);
+
+            on(S::Int, {C::Digit}, S::Int);
+            on(S::Int, {C::Exp}, S::Exp);
+            on(S::Int, {C::Dot}, S::IntDot);
+            on(S::IntDot, {C::Digit}, S::Float);
+            on(S::Float, {C::Digit}, S::Float);
+            on(S::Float, {C::Exp}, S::Exp);
+            on(S::Exp, {C::Plus, C::Minus}, S::ExpSign);
+            on(S::Exp, {C::Digit}, S::FloatExp);
+            on(S::ExpSign, {C::Digit}, S::FloatExp);
+            on(S::FloatExp, {C::Digit}, S::FloatExp);
+
+            on(S::Minus, {C::Greater, C::Equal}, S::OpDone);
+            on(S::OpEq, {C::Equal}, S::OpDone);
+            on(S::Slash, {C::Equal}, S::OpDone);
+            on(S::Slash, {C::Slash}, S::Comment);
+
+            for (std::size_t c = 0; c < kNumCharClasses; ++c) {
+                table[index(S::Comment)][c] = S::Comment;
+                table[index(S::StrBody)][c] = S::StrBody;
+            }
+            table[index(S::Comment)][index(C::Newline)] = S::Dead;
+            table[index(S::StrBody)][index(C::Newline)] = S::Dead;
+            on(S::StrBody, {C::Quote}, S::StrEnd);
+
+            on(S::Dot, {C::Dot}, S::DotDot);
+            on(S::Dot, {C::Star, C::Slash}, S::OpDone);
+            on(S::DotDot, {C::Dot}, S::OpDone);
+
+            on(S::Ws, {C::Whitespace, C::Newline}, S::Ws);
+
+            return table;
+        }
+
+        constexpr ClassTable kClassTable = buildClassTable();
+        constexpr TransitionTable kTransitions = buildTransitionTable();
+
+    }  // namespace
+
+    CharClass charClassOf(unsigned char c) {
+        return kClassTable[c];
     }
-    return table[c];
-}
 
-const State TRANSITION[NUM_STATES][NUM_CLASSES] = {
-    //                 CC_LETTER CC_EXP CC_DIGIT CC_UNDERSCORE CC_WS CC_NEWLINE CC_QUOTE CC_DOT CC_PLUS CC_MINUS CC_STAR CC_SLASH CC_LT CC_GT CC_EQ CC_SIMPLE CC_OTHER
-    /* S_DEAD      */ {},
-    /* S_START     */ {S_IDENT, S_IDENT, S_INT, S_DEAD, S_WS, S_WS, S_STR_BODY, S_DOT, S_OP_EQ, S_MINUS, S_OP_EQ, S_SLASH, S_OP_EQ, S_OP_EQ, S_OP_DONE, S_OP_DONE, S_DEAD},
-    /* S_IDENT     */ {S_IDENT, S_IDENT, S_IDENT, S_IDENT, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD},
-    /* S_INT       */ {S_DEAD, S_EXP, S_INT, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_INT_DOT, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD},
-    /* S_INT_DOT   */ {S_DEAD, S_DEAD, S_FLOAT, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD},
-    /* S_FLOAT     */ {S_DEAD, S_EXP, S_FLOAT, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD},
-    /* S_EXP       */ {S_DEAD, S_DEAD, S_FLOAT_EXP, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_EXP_SIGN, S_EXP_SIGN, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD},
-    /* S_EXP_SIGN  */ {S_DEAD, S_DEAD, S_FLOAT_EXP, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD},
-    /* S_FLOAT_EXP */ {S_DEAD, S_DEAD, S_FLOAT_EXP, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD},
-    /* S_OP_DONE   */ {},
-    /* S_MINUS     */ {S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_OP_DONE, S_OP_DONE, S_DEAD, S_DEAD},
-    /* S_OP_EQ     */ {S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_OP_DONE, S_DEAD, S_DEAD},
-    /* S_SLASH     */ {S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_COMMENT, S_DEAD, S_DEAD, S_OP_DONE, S_DEAD, S_DEAD},
-    /* S_COMMENT   */ {S_COMMENT, S_COMMENT, S_COMMENT, S_COMMENT, S_COMMENT, S_DEAD, S_COMMENT, S_COMMENT, S_COMMENT, S_COMMENT, S_COMMENT, S_COMMENT, S_COMMENT, S_COMMENT, S_COMMENT, S_COMMENT, S_COMMENT},
-    /* S_DOT       */ {S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DOT_DOT, S_DEAD, S_DEAD, S_OP_DONE, S_OP_DONE, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD},
-    /* S_DOT_DOT   */ {S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_OP_DONE, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD},
-    /* S_STR_BODY  */ {S_STR_BODY, S_STR_BODY, S_STR_BODY, S_STR_BODY, S_STR_BODY, S_DEAD, S_STR_END, S_STR_BODY, S_STR_BODY, S_STR_BODY, S_STR_BODY, S_STR_BODY, S_STR_BODY, S_STR_BODY, S_STR_BODY, S_STR_BODY, S_STR_BODY},
-    /* S_STR_END   */ {},
-    /* S_WS        */ {S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_WS, S_WS, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD, S_DEAD},
-};
+    State nextState(State from, CharClass on) {
+        return kTransitions[index(from)][index(on)];
+    }
 
-const Action ACTION[NUM_STATES] = {
-    A_NONE,   // S_DEAD
-    A_NONE,   // S_START
-    A_WORD,   // S_IDENT      keyword table, else IDENTIFIER
-    A_INT,    // S_INT
-    A_NONE,   // S_INT_DOT    "12." is not a number yet
-    A_FLOAT,  // S_FLOAT
-    A_NONE,   // S_EXP
-    A_NONE,   // S_EXP_SIGN
-    A_FLOAT,  // S_FLOAT_EXP
-    A_OP,     // S_OP_DONE    operator table
-    A_OP,     // S_MINUS      "-" is complete on its own
-    A_OP,     // S_OP_EQ        "<" / ">" are complete on their own
-    A_OP,     // S_SLASH
-    A_SKIP,   // S_COMMENT
-    A_NONE,   // S_DOT        "." alone is nothing
-    A_NONE,   // S_DOT_DOT    ".." alone is nothing
-    A_NONE,   // S_STR_BODY   no closing quote yet
-    A_STRING, // S_STR_END
-    A_SKIP,   // S_WS         accepting, but no token
-};
+    Action actionOf(State state) {
+        switch (state) {
+        case State::Ident:    return Action::Word;
+        case State::Int:      return Action::Int;
+        case State::Float:
+        case State::FloatExp: return Action::Float;
+        case State::OpDone:
+        case State::Minus:
+        case State::OpEq:
+        case State::Slash:    return Action::Op;
+        case State::StrEnd:   return Action::String;
+        case State::Comment:
+        case State::Ws:       return Action::Skip;
+        case State::Dead:
+        case State::Start:
+        case State::IntDot:
+        case State::Exp:
+        case State::ExpSign:
+        case State::Dot:
+        case State::DotDot:
+        case State::StrBody:  return Action::None;
+        }
+        return Action::None;
+    }
 
-const char *STATE_NAMES[] = {
-    "DEAD",
-    "START",
-    "IDENT",
-    "INT",
-    "INT_DOT",
-    "FLOAT",
-    "EXP",
-    "EXP_SIGN",
-    "FLOAT_EXP",
-    "OP_DONE",
-    "MINUS",
-    "OP_EQ",
-    "SLASH",
-    "COMMENT",
-    "DOT",
-    "DOT_DOT",
-    "STR_BODY",
-    "STR_END",
-    "WS",
-};
-
-static_assert(sizeof(STATE_NAMES) / sizeof(STATE_NAMES[0]) == NUM_STATES,
-              "STATE_NAMES is out of sync with enum State");
-
-const char *CLASS_NAMES[] = {
-    "LETTER",
-    "EXP",
-    "DIGIT",
-    "_",
-    "WS",
-    "NL",
-    "QUOTE",
-    "DOT",
-    "PLUS",
-    "MINUS",
-    "STAR",
-    "SLASH",
-    "LT",
-    "GT",
-    "EQ",
-    "SIMPLE",
-    "OTHER",
-};
-
-static_assert(sizeof(CLASS_NAMES) / sizeof(CLASS_NAMES[0]) == NUM_CLASSES,
-              "CLASS_NAMES is out of sync with enum CharClass");
+}  // namespace octac::lexer
