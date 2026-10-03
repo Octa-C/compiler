@@ -1,0 +1,45 @@
+function all(i32 n, vector<f32, 3> v, matrix<f32, 2, 2> m, string s) -> bool {
+    i32 a = 1;
+    a = 2;
+    a += 3;
+    v[0] = 1.0;
+    m[0][1] = 2.0;
+    helper(a, v);
+    if (a is 1) {
+        a = 2;
+    } elseif (a is not 2) {
+        a = 3;
+    } elseif (a >= 4) {
+        a = 4;
+    } else {
+        a = 5;
+    }
+    if (true) {
+    }
+    for (i32 i = 0...10) {
+        continue;
+    }
+    for (f32 e in v) {
+        break;
+    }
+    until (a > 10) {
+        a *= 2;
+    }
+    do {
+        a -= 1;
+    } until (a <= 0);
+    caseof (a) {
+        case 1:
+            a = 1;
+        case -2.5:
+            a = 2;
+        case "str":
+        case false:
+            a = 3;
+        default:
+            a = 4;
+    }
+    caseof (a) {
+    }
+    return a is 0;
+}

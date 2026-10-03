@@ -1,0 +1,397 @@
+Program
+  <FUNCTION,>
+  <IDENTIFIER, main>
+  <LPAREN,>
+  Params (empty)
+  <RPAREN,>
+  <ARROW,>
+  Type
+    <SCALAR, i32>
+  <LBRACE,>
+  Stmts
+    StmtsP
+      Stmt
+        Type
+          <MATRIX,>
+          <LESS,>
+          <SCALAR, i32>
+          TypeP2
+            <GREATER,>
+        <IDENTIFIER, A>
+        <ASSIGNMENT, =>
+        Expr
+          AndExpr
+            NotExpr
+              Comp
+                Sum
+                  Product
+                    Operand
+                      IndexedData
+                        Data
+                          <LBRACKET,>
+                          Args
+                            ArgList
+                              Expr
+                                AndExpr
+                                  NotExpr
+                                    Comp
+                                      Sum
+                                        Product
+                                          Operand
+                                            IndexedData
+                                              Data
+                                                <LBRACKET,>
+                                                Args
+                                                  ArgList
+                                                    Expr
+                                                      AndExpr
+                                                        NotExpr
+                                                          Comp
+                                                            Sum
+                                                              Product
+                                                                Operand
+                                                                  IndexedData
+                                                                    Data
+                                                                      <INT, 1>
+                                                                    IndexedDataP (empty)
+                                                                ProductP (empty)
+                                                              SumP (empty)
+                                                            CompP (empty)
+                                                        AndExprP (empty)
+                                                      ExprP (empty)
+                                                    ArgListP
+                                                      <COMMA,>
+                                                      Expr
+                                                        AndExpr
+                                                          NotExpr
+                                                            Comp
+                                                              Sum
+                                                                Product
+                                                                  Operand
+                                                                    IndexedData
+                                                                      Data
+                                                                        <INT, 2>
+                                                                      IndexedDataP (empty)
+                                                                  ProductP (empty)
+                                                                SumP (empty)
+                                                              CompP (empty)
+                                                          AndExprP (empty)
+                                                        ExprP (empty)
+                                                      ArgListP (empty)
+                                                <RBRACKET,>
+                                              IndexedDataP (empty)
+                                          ProductP (empty)
+                                        SumP (empty)
+                                      CompP (empty)
+                                  AndExprP (empty)
+                                ExprP (empty)
+                              ArgListP
+                                <COMMA,>
+                                Expr
+                                  AndExpr
+                                    NotExpr
+                                      Comp
+                                        Sum
+                                          Product
+                                            Operand
+                                              IndexedData
+                                                Data
+                                                  <LBRACKET,>
+                                                  Args
+                                                    ArgList
+                                                      Expr
+                                                        AndExpr
+                                                          NotExpr
+                                                            Comp
+                                                              Sum
+                                                                Product
+                                                                  Operand
+                                                                    IndexedData
+                                                                      Data
+                                                                        <INT, 3>
+                                                                      IndexedDataP (empty)
+                                                                  ProductP (empty)
+                                                                SumP (empty)
+                                                              CompP (empty)
+                                                          AndExprP (empty)
+                                                        ExprP (empty)
+                                                      ArgListP
+                                                        <COMMA,>
+                                                        Expr
+                                                          AndExpr
+                                                            NotExpr
+                                                              Comp
+                                                                Sum
+                                                                  Product
+                                                                    Operand
+                                                                      IndexedData
+                                                                        Data
+                                                                          <INT, 4>
+                                                                        IndexedDataP (empty)
+                                                                    ProductP (empty)
+                                                                  SumP (empty)
+                                                                CompP (empty)
+                                                            AndExprP (empty)
+                                                          ExprP (empty)
+                                                        ArgListP (empty)
+                                                  <RBRACKET,>
+                                                IndexedDataP (empty)
+                                            ProductP (empty)
+                                          SumP (empty)
+                                        CompP (empty)
+                                    AndExprP (empty)
+                                  ExprP (empty)
+                                ArgListP (empty)
+                          <RBRACKET,>
+                        IndexedDataP (empty)
+                    ProductP (empty)
+                  SumP (empty)
+                CompP (empty)
+            AndExprP (empty)
+          ExprP (empty)
+        <SEMICOLON,>
+      StmtsP
+        Stmt
+          Type
+            <MATRIX,>
+            <LESS,>
+            <SCALAR, i32>
+            TypeP2
+              <GREATER,>
+          <IDENTIFIER, B>
+          <ASSIGNMENT, =>
+          Expr
+            AndExpr
+              NotExpr
+                Comp
+                  Sum
+                    Product
+                      Operand
+                        IndexedData
+                          Data
+                            <LBRACKET,>
+                            Args
+                              ArgList
+                                Expr
+                                  AndExpr
+                                    NotExpr
+                                      Comp
+                                        Sum
+                                          Product
+                                            Operand
+                                              IndexedData
+                                                Data
+                                                  <LBRACKET,>
+                                                  Args
+                                                    ArgList
+                                                      Expr
+                                                        AndExpr
+                                                          NotExpr
+                                                            Comp
+                                                              Sum
+                                                                Product
+                                                                  Operand
+                                                                    IndexedData
+                                                                      Data
+                                                                        <INT, 5>
+                                                                      IndexedDataP (empty)
+                                                                  ProductP (empty)
+                                                                SumP (empty)
+                                                              CompP (empty)
+                                                          AndExprP (empty)
+                                                        ExprP (empty)
+                                                      ArgListP
+                                                        <COMMA,>
+                                                        Expr
+                                                          AndExpr
+                                                            NotExpr
+                                                              Comp
+                                                                Sum
+                                                                  Product
+                                                                    Operand
+                                                                      IndexedData
+                                                                        Data
+                                                                          <INT, 6>
+                                                                        IndexedDataP (empty)
+                                                                    ProductP (empty)
+                                                                  SumP (empty)
+                                                                CompP (empty)
+                                                            AndExprP (empty)
+                                                          ExprP (empty)
+                                                        ArgListP (empty)
+                                                  <RBRACKET,>
+                                                IndexedDataP (empty)
+                                            ProductP (empty)
+                                          SumP (empty)
+                                        CompP (empty)
+                                    AndExprP (empty)
+                                  ExprP (empty)
+                                ArgListP
+                                  <COMMA,>
+                                  Expr
+                                    AndExpr
+                                      NotExpr
+                                        Comp
+                                          Sum
+                                            Product
+                                              Operand
+                                                IndexedData
+                                                  Data
+                                                    <LBRACKET,>
+                                                    Args
+                                                      ArgList
+                                                        Expr
+                                                          AndExpr
+                                                            NotExpr
+                                                              Comp
+                                                                Sum
+                                                                  Product
+                                                                    Operand
+                                                                      IndexedData
+                                                                        Data
+                                                                          <INT, 7>
+                                                                        IndexedDataP (empty)
+                                                                    ProductP (empty)
+                                                                  SumP (empty)
+                                                                CompP (empty)
+                                                            AndExprP (empty)
+                                                          ExprP (empty)
+                                                        ArgListP
+                                                          <COMMA,>
+                                                          Expr
+                                                            AndExpr
+                                                              NotExpr
+                                                                Comp
+                                                                  Sum
+                                                                    Product
+                                                                      Operand
+                                                                        IndexedData
+                                                                          Data
+                                                                            <INT, 8>
+                                                                          IndexedDataP (empty)
+                                                                      ProductP (empty)
+                                                                    SumP (empty)
+                                                                  CompP (empty)
+                                                              AndExprP (empty)
+                                                            ExprP (empty)
+                                                          ArgListP (empty)
+                                                    <RBRACKET,>
+                                                  IndexedDataP (empty)
+                                              ProductP (empty)
+                                            SumP (empty)
+                                          CompP (empty)
+                                      AndExprP (empty)
+                                    ExprP (empty)
+                                  ArgListP (empty)
+                            <RBRACKET,>
+                          IndexedDataP (empty)
+                      ProductP (empty)
+                    SumP (empty)
+                  CompP (empty)
+              AndExprP (empty)
+            ExprP (empty)
+          <SEMICOLON,>
+        StmtsP
+          Stmt
+            Type
+              <MATRIX,>
+              <LESS,>
+              <SCALAR, i32>
+              TypeP2
+                <GREATER,>
+            <IDENTIFIER, C>
+            <ASSIGNMENT, =>
+            Expr
+              AndExpr
+                NotExpr
+                  Comp
+                    Sum
+                      Product
+                        Operand
+                          IndexedData
+                            Data
+                              <IDENTIFIER, A>
+                              DataP (empty)
+                            IndexedDataP (empty)
+                        ProductP
+                          <STAR_SLASH_MOD, *>
+                          Operand
+                            IndexedData
+                              Data
+                                <IDENTIFIER, B>
+                                DataP (empty)
+                              IndexedDataP (empty)
+                          ProductP (empty)
+                      SumP (empty)
+                    CompP (empty)
+                AndExprP (empty)
+              ExprP (empty)
+            <SEMICOLON,>
+          StmtsP
+            Stmt
+              <IDENTIFIER, printf>
+              StmtP
+                <LPAREN,>
+                Args
+                  ArgList
+                    Expr
+                      AndExpr
+                        NotExpr
+                          Comp
+                            Sum
+                              Product
+                                Operand
+                                  IndexedData
+                                    Data
+                                      <STRING_LIT, "A * B:\n%m\n">
+                                    IndexedDataP (empty)
+                                ProductP (empty)
+                              SumP (empty)
+                            CompP (empty)
+                        AndExprP (empty)
+                      ExprP (empty)
+                    ArgListP
+                      <COMMA,>
+                      Expr
+                        AndExpr
+                          NotExpr
+                            Comp
+                              Sum
+                                Product
+                                  Operand
+                                    IndexedData
+                                      Data
+                                        <IDENTIFIER, C>
+                                        DataP (empty)
+                                      IndexedDataP (empty)
+                                  ProductP (empty)
+                                SumP (empty)
+                              CompP (empty)
+                          AndExprP (empty)
+                        ExprP (empty)
+                      ArgListP (empty)
+                <RPAREN,>
+                <SEMICOLON,>
+            StmtsP
+              Stmt
+                <RETURN,>
+                Expr
+                  AndExpr
+                    NotExpr
+                      Comp
+                        Sum
+                          Product
+                            Operand
+                              IndexedData
+                                Data
+                                  <INT, 0>
+                                IndexedDataP (empty)
+                            ProductP (empty)
+                          SumP (empty)
+                        CompP (empty)
+                    AndExprP (empty)
+                  ExprP (empty)
+                <SEMICOLON,>
+              StmtsP (empty)
+  <RBRACE,>
+  ProgramP (empty)

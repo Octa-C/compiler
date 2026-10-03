@@ -1,0 +1,16 @@
+function main() -> i32 {
+    bool a = not x and y or z;
+    bool b = not not x;
+    bool c = a < b or a > b or a <= b or a >= b;
+    bool d = a is b or a is not b;
+    i32 e = 1 + 2 - 3 * 4 / 5 % 6;
+    matrix<f32> f = A .* B ./ C;
+    i32 g = -+-x;
+    matrix<f32> h = A'';
+    f32 i = M[1][2]'[0];
+    vector<f32> j = [1.0, 2.0, f(3), []];
+    f32 k = (a + b) * (c);
+    f32 l = f();
+    f32 m = f(1, g(2, 3), [4]);
+    return "text";
+}

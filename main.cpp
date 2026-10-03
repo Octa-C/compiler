@@ -7,11 +7,15 @@
 #include "arg_parser.hpp"
 #include "diagnostics.hpp"
 #include "file_io.hpp"
+#include "parse_tree.hpp"
+#include "parser.hpp"
 #include "scanner.hpp"
 #include "terminal.hpp"
 
 using octac::lexer::Scanner;
 using octac::lexer::Token;
+using octac::parser::ParseNode;
+using octac::parser::Parser;
 using octac::utils::ArgParser;
 using octac::utils::DiagnosticReporter;
 
@@ -27,11 +31,31 @@ namespace {
         std::cerr << "octacc: error: " << message << '\n';
     }
 
+    /**
+     * @brief Flushes the output stream and picks the exit code.
+     *
+     * @param out The stream the output was written to.
+     * @param outputPath The output file, if one was given, for the error message.
+     * @param reporter The reporter whose error count decides the exit code.
+     * @return kExitUsage if the output could not be written, kExitErrors if any diagnostic was
+     *         an error, otherwise 0.
+     */
+    int finish(std::ostream &out, const std::optional<std::string> &outputPath,
+               const DiagnosticReporter &reporter) {
+        out.flush();
+        if (!out) {
+            fatal("cannot write '" + outputPath.value_or("standard output") + "'");
+            return kExitUsage;
+        }
+        return reporter.errorCount() > 0 ? kExitErrors : 0;
+    }
+
 }  // namespace
 
 int main(int argc, char **argv) {
     ArgParser args("octacc", "The OctaC compiler.");
     args.addFlag("emit-tokens", '\0', "Stop after lexical analysis and print the token stream.");
+    args.addFlag("emit-parse-tree", '\0', "Stop after parsing and print the parse tree.");
     args.addOption("output", 'o', "file", "Write the output to <file> instead of standard output.");
     args.addPositional("input", "The OctaC source file to compile.");
 
@@ -47,9 +71,14 @@ int main(int argc, char **argv) {
     const std::string &inputPath = args.positional("input");
     const std::optional<std::string> outputPath = args.option("output");
     const bool emitTokens = args.flag("emit-tokens");
+    const bool emitParseTree = args.flag("emit-parse-tree");
 
-    if (outputPath && !emitTokens) {
-        fatal("option '--output' requires '--emit-tokens'");
+    if (emitTokens && emitParseTree) {
+        fatal("options '--emit-tokens' and '--emit-parse-tree' cannot be combined");
+        return kExitUsage;
+    }
+    if (outputPath && !emitTokens && !emitParseTree) {
+        fatal("option '--output' requires '--emit-tokens' or '--emit-parse-tree'");
         return kExitUsage;
     }
 
@@ -77,11 +106,17 @@ int main(int argc, char **argv) {
         for (const Token &token : tokens) {
             out << token << '\n';
         }
-        out.flush();
-        if (!out) {
-            fatal("cannot write '" + outputPath.value_or("standard output") + "'");
-            return kExitUsage;
-        }
+        return finish(out, outputPath, reporter);
     }
-    return reporter.errorCount() > 0 ? kExitErrors : 0;
+
+    if (reporter.errorCount() > 0) {
+        return kExitErrors;
+    }
+
+    Parser parser(tokens, reporter);
+    const std::optional<ParseNode> tree = parser.parse();
+    if (emitParseTree && tree) {
+        out << *tree;
+    }
+    return finish(out, outputPath, reporter);
 }

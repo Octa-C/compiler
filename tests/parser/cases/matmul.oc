@@ -1,0 +1,7 @@
+function main() -> i32 {
+    matrix<i32> A = [[1, 2], [3, 4]];
+    matrix<i32> B = [[5, 6], [7, 8]];
+    matrix<i32> C = A * B;
+    printf("A * B:\n%m\n", C);
+    return 0;
+}

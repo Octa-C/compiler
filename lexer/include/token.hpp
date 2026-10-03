@@ -89,6 +89,14 @@ namespace octac::lexer {
     const char *tokenTypeName(TokenType type);
 
     /**
+     * @brief Describes a token type for use in a message, for example "';'" or "an identifier".
+     *
+     * @param type The token type.
+     * @return A static string such as "'for'", "'+' or '-'" or "an integer literal".
+     */
+    const char *tokenTypeDescription(TokenType type);
+
+    /**
      * @brief Resolves a word to a keyword, scalar type, bool literal or identifier.
      *
      * @param lexeme A word matching [a-zA-Z][a-zA-Z0-9_]*.

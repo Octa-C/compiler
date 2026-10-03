@@ -1,0 +1,21 @@
+errors_statements.oc:2:13: error: expected an expression but found ';'
+ 2 |     i32 x = ;
+   |             ^
+errors_statements.oc:3:12: error: expected an expression but found ';'
+ 3 |     x = 3 +;
+   |            ^
+errors_statements.oc:4:20: error: expected ')' but found '{'
+ 4 |     if (x is not 3 {
+   |                    ^
+errors_statements.oc:8:5: error: expected ';' but found 'break'
+ 8 |     break
+   |     ^~~~~
+errors_statements.oc:9:5: error: expected ';' but found 'y'
+ 9 |     y[1][2][3] = 1;
+   |     ^
+errors_statements.oc:10:16: error: expected an assignment operator or 'in' but found '0'
+ 10 |     for (i32 i 0...1) {
+    |                ^
+errors_statements.oc:13:14: error: expected a case value but found 'x'
+ 13 |         case x:
+    |              ^

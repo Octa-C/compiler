@@ -124,6 +124,62 @@ namespace octac::lexer {
         return "UNKNOWN";
     }
 
+    const char *tokenTypeDescription(TokenType type) {
+        switch (type) {
+        case TokenType::For:           return "'for'";
+        case TokenType::Do:            return "'do'";
+        case TokenType::Until:         return "'until'";
+        case TokenType::Continue:      return "'continue'";
+        case TokenType::Function:      return "'function'";
+        case TokenType::Return:        return "'return'";
+        case TokenType::If:            return "'if'";
+        case TokenType::Else:          return "'else'";
+        case TokenType::ElseIf:        return "'elseif'";
+        case TokenType::CaseOf:        return "'caseof'";
+        case TokenType::Case:          return "'case'";
+        case TokenType::Default:       return "'default'";
+        case TokenType::And:           return "'and'";
+        case TokenType::Or:            return "'or'";
+        case TokenType::Not:           return "'not'";
+        case TokenType::Is:            return "'is'";
+        case TokenType::In:            return "'in'";
+        case TokenType::Break:         return "'break'";
+        case TokenType::Scalar:        return "a scalar type";
+        case TokenType::Vector:        return "'vector'";
+        case TokenType::Matrix:        return "'matrix'";
+        case TokenType::String:        return "'string'";
+        case TokenType::LBrace:        return "'{'";
+        case TokenType::RBrace:        return "'}'";
+        case TokenType::LParen:        return "'('";
+        case TokenType::RParen:        return "')'";
+        case TokenType::LBracket:      return "'['";
+        case TokenType::RBracket:      return "']'";
+        case TokenType::Semicolon:     return "';'";
+        case TokenType::Arrow:         return "'->'";
+        case TokenType::Comma:         return "','";
+        case TokenType::Ellipsis:      return "'...'";
+        case TokenType::Colon:         return "':'";
+        case TokenType::PlusMinus:     return "'+' or '-'";
+        case TokenType::StarSlashMod:  return "'*', '/' or '%'";
+        case TokenType::Transpose:     return "the transpose operator";
+        case TokenType::DotStar:       return "'.*'";
+        case TokenType::DotSlash:      return "'./'";
+        case TokenType::Less:          return "'<'";
+        case TokenType::Greater:       return "'>'";
+        case TokenType::LessEq:        return "'<='";
+        case TokenType::GreaterEq:     return "'>='";
+        case TokenType::Assignment:    return "an assignment operator";
+        case TokenType::Identifier:    return "an identifier";
+        case TokenType::BoolLit:       return "a boolean literal";
+        case TokenType::Int:           return "an integer literal";
+        case TokenType::Float:         return "a float literal";
+        case TokenType::StringLit:     return "a string literal";
+        case TokenType::CompilerEof:   return "end of input";
+        case TokenType::CompilerError: return "an invalid token";
+        }
+        return "an unknown token";
+    }
+
     TokenType lookupKeyword(const std::string &lexeme) {
         const auto it = kKeywords.find(lexeme);
         return it == kKeywords.end() ? TokenType::Identifier : it->second;

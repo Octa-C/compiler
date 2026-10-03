@@ -1,0 +1,61 @@
+function dot(vector<f32> a, vector<f32> b) -> f32 {
+    f32 acc = 0.0;
+    for (i32 i = 0...2) {
+        acc = acc + a[i] * b[i];
+    }
+    return acc;
+}
+
+function classify(i32 n) -> string {
+    string label = "";
+    caseof (n % 3) {
+        case 0: 
+            label = "fizz";
+        case 1: 
+            label = "one";
+        default: 
+            label = "other";
+    }
+    return label;
+}
+
+function main() -> i32 {
+    i64 big = 9000000000;
+    i16 small = 7;
+    f64 pi = 3.14159;
+    f16 half = 0.5;
+    bool ok = 1;
+
+    matrix<f32> A = [[1.0, 2.0], [3.0, 4.0]];
+    matrix<f32> B = A';
+    matrix<f32> C = A .* B;
+    matrix<f32> D = A ./ B;
+    matrix<f32> E = A * B - C / 2.0;
+
+    vector<f32> x = [2.0, 1.0];
+    vector<f32> y = [0.5, 0.25];
+    f32 d = dot(x, y);
+
+    i32 steps = 0;
+    until (d < 1.0 or steps >= 20) {
+        d = d / 2.0;
+        steps = steps + 1;
+    }
+
+    do {
+        steps = steps - 1;
+        if (steps is 5 and not ok) {
+            break;
+        } elseif (steps <= 2 or steps > 100) {
+            continue;
+        } else {
+            ok = 0;
+        }
+    } until (steps is 0);
+
+    for (i32 k in x) {
+        printf("k = %d\n", k);
+    }
+
+    return 0;
+}

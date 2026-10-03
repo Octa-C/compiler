@@ -1,0 +1,15 @@
+function f(i32 a, ) -> i32 {
+    return 1;
+}
+
+function -> i32 {
+    return 2;
+}
+
+function g() i32 {
+    return 3;
+}
+
+function h() -> i32 {
+    return 4;
+}

@@ -3,15 +3,15 @@
 
 A statically typed, C-structured language for numerical and matrix computation.
 
-[Documentation] | [Getting started] | [Lexer] | [Contributing]
+[Documentation] | [Lexer] | [Parser] | [Contributing]
 </div>
 
 This is the main source code repository for OctaC. It contains the compiler and
 its test suite.
 
 [Documentation]: https://github.com/Octa-C/octac-docs
-[Getting started]: #quick-start
 [Lexer]: lexer/README.md
+[Parser]: parser/README.md
 [Contributing]: CONTRIBUTING.md
 
 ## Features
@@ -38,7 +38,7 @@ its test suite.
 | Stage | State |
 |---|---|
 | Lexical analysis | Done ([lexer/](lexer/README.md)) |
-| Parsing | Not started |
+| Parsing | Done ([parser/](parser/README.md)) |
 | Semantic analysis | Not started |
 | Code generation | Not started |
 
@@ -54,7 +54,9 @@ build/octacc --emit-tokens tests/lexer/cases/sample.oc
 `--emit-tokens` stops after lexical analysis and prints each token as
 `<TYPE, value>`, one per line, ending with `<COMPILER_EOF,>`. See the
 [lexer README](lexer/README.md) for the output format, error reporting and how
-the DFA works. Run `build/octacc --help` for every option.
+the DFA works. `--emit-parse-tree` stops after parsing and prints the parse tree,
+described in the [parser README](parser/README.md). Run `build/octacc --help` for
+every option.
 
 ## Building and Testing
 
@@ -88,11 +90,25 @@ python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 │   │   ├── scanner.cpp               # the scanning loop and line/column tracking
 │   │   └── token.cpp                 # token names, keyword and operator lookup tables
 │   └── README.md                     # lexer output format and DFA design
+├── parser
+│   ├── include
+│   │   ├── parse_tree.hpp            # NonTerminal enum, ParseNode struct, tree printer
+│   │   └── parser.hpp                # Parser class
+│   ├── src
+│   │   ├── parse_tree.cpp            # nonterminal names and the tree printer
+│   │   └── parser.cpp                # one function per nonterminal, error recovery
+│   ├── tools
+│   │   ├── js
+│   │   │   ├── parse_tree_layout.js  # tree layout used by the HTML page
+│   │   │   └── parse_tree_view.js    # expand, collapse, pan and zoom in the HTML page
+│   │   └── visualize_parse_tree.py   # draws a parse tree as SVG or HTML
+│   └── README.md                     # parse tree format, error recovery and design
 ├── specs
 │   └── tokens.txt                    # the token set, source of truth for the lexer
 ├── tests
 │   ├── driver/                       # command line tests
-│   └── lexer/                        # token stream and diagnostics tests
+│   ├── lexer/                        # token stream and diagnostics tests
+│   └── parser/                       # parse tree, diagnostics and tools tests
 ├── utils
 │   ├── include
 │   │   ├── arg_parser.hpp            # ArgParser, a command line parser

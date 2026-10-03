@@ -35,7 +35,7 @@ def test_help_lists_every_argument(compiler):
         proc = run(compiler, flag)
         assert proc.returncode == 0
         assert proc.stdout.startswith("usage: octacc [options] <input>")
-        for text in ("--emit-tokens", "-o, --output <file>", "<input>"):
+        for text in ("--emit-tokens", "--emit-parse-tree", "-o, --output <file>", "<input>"):
             assert text in proc.stdout
 
 
@@ -46,8 +46,10 @@ def test_emit_tokens_prints_the_token_stream(compiler, source):
     assert proc.stderr == ""
 
 
-def test_without_emit_tokens_nothing_is_printed(compiler, source):
-    proc = run(compiler, str(source))
+def test_without_an_emit_flag_nothing_is_printed(compiler, tmp_path):
+    path = tmp_path / "prog.oc"
+    path.write_text("function main() -> i32 {\n    return 0;\n}\n", encoding="utf-8")
+    proc = run(compiler, str(path))
     assert proc.returncode == 0
     assert proc.stdout == ""
     assert proc.stderr == ""
@@ -87,7 +89,7 @@ def test_double_dash_ends_option_parsing(compiler, tmp_path):
         (["x.oc", "-o"], "option '-o' requires a value"),
         (["--emit-tokens=yes", "x.oc"], "option '--emit-tokens' does not take a value"),
         (["-o", "a", "-o", "b", "x.oc"], "option '-o' given more than once"),
-        (["-o", "a", "x.oc"], "option '--output' requires '--emit-tokens'"),
+        (["-o", "a", "x.oc"], "option '--output' requires '--emit-tokens' or '--emit-parse-tree'"),
     ],
 )
 def test_usage_errors_exit_with_2(compiler, args, message):
@@ -124,3 +126,58 @@ def test_lexical_errors_exit_with_1_without_emit_tokens(compiler, tmp_path):
     proc = run(compiler, str(path))
     assert proc.returncode == 1
     assert proc.stdout == ""
+
+
+def test_emit_parse_tree_prints_the_tree(compiler, tmp_path):
+    path = tmp_path / "prog.oc"
+    path.write_text("function main() -> i32 {\n    return 0;\n}\n", encoding="utf-8")
+    proc = run(compiler, "--emit-parse-tree", str(path))
+    assert proc.returncode == 0
+    lines = proc.stdout.splitlines()
+    assert lines[0] == "Program"
+    assert lines[1] == "  <FUNCTION,>"
+    assert "  <IDENTIFIER, main>" in lines
+    assert "  ProgramP (empty)" in lines
+    assert proc.stderr == ""
+
+
+def test_emit_parse_tree_writes_to_a_file(compiler, tmp_path):
+    path = tmp_path / "prog.oc"
+    path.write_text("function main() -> i32 {\n}\n", encoding="utf-8")
+    out = tmp_path / "tree.txt"
+    proc = run(compiler, "--emit-parse-tree", "-o", str(out), str(path))
+    assert proc.returncode == 0
+    assert proc.stdout == ""
+    assert out.read_text(encoding="utf-8").startswith("Program\n")
+
+
+def test_syntax_errors_exit_with_1_and_print_no_tree(compiler, tmp_path):
+    path = tmp_path / "bad.oc"
+    path.write_text("function main() -> i32 {\n    i32 x = ;\n}\n", encoding="utf-8")
+    proc = run(compiler, "--emit-parse-tree", str(path))
+    assert proc.returncode == 1
+    assert proc.stdout == ""
+    assert "expected an expression but found ';'" in proc.stderr
+
+
+def test_without_an_emit_flag_syntax_errors_still_exit_with_1(compiler, tmp_path):
+    path = tmp_path / "bad.oc"
+    path.write_text("function main() -> i32 {\n", encoding="utf-8")
+    proc = run(compiler, str(path))
+    assert proc.returncode == 1
+    assert proc.stdout == ""
+
+
+def test_lexical_errors_stop_before_parsing(compiler, tmp_path):
+    path = tmp_path / "bad.oc"
+    path.write_text("function main() -> i32 { @ }\n", encoding="utf-8")
+    proc = run(compiler, "--emit-parse-tree", str(path))
+    assert proc.returncode == 1
+    assert "unrecognized lexeme" in proc.stderr
+    assert "expected" not in proc.stderr
+
+
+def test_emit_flags_cannot_be_combined(compiler, source):
+    proc = run(compiler, "--emit-tokens", "--emit-parse-tree", str(source))
+    assert proc.returncode == 2
+    assert "cannot be combined" in proc.stderr

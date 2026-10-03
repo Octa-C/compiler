@@ -1,0 +1,11 @@
+function f(vector<f32 v) -> i32 {
+    return 0;
+}
+
+function g() -> i32 {
+    x[1] y;
+    caseof (1) { x = 1; }
+    matrix<f32, 2> m = 1;
+    case_ = 1 is not;
+    return 0;
+}

@@ -1,0 +1,9 @@
+errors_header.oc:1:19: error: expected a type but found ')'
+ 1 | function f(i32 a, ) -> i32 {
+   |                   ^
+errors_header.oc:5:10: error: expected an identifier but found '->'
+ 5 | function -> i32 {
+   |          ^~
+errors_header.oc:9:14: error: expected '->' but found 'i32'
+ 9 | function g() i32 {
+   |              ^~~

@@ -1,0 +1,15 @@
+errors_grammar.oc:1:23: error: expected '>' or ',' but found 'v'
+ 1 | function f(vector<f32 v) -> i32 {
+   |                       ^
+errors_grammar.oc:6:10: error: expected an assignment operator or '[' but found 'y'
+ 6 |     x[1] y;
+   |          ^
+errors_grammar.oc:7:18: error: expected 'default' or '}' but found 'x'
+ 7 |     caseof (1) { x = 1; }
+   |                  ^
+errors_grammar.oc:8:18: error: expected ',' but found '>'
+ 8 |     matrix<f32, 2> m = 1;
+   |                  ^
+errors_grammar.oc:9:21: error: expected an expression but found ';'
+ 9 |     case_ = 1 is not;
+   |                     ^

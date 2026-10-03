@@ -1,0 +1,10 @@
+function main() -> i32 {
+    f32 val = 100.0;
+    i32 steps = 0;
+    until (val < 1.0 or steps is 20) {
+        val /= 2.0;
+        steps += 1;
+    }
+    printf("Converged in %d steps.", steps);
+    return 0;
+}

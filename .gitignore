@@ -71,3 +71,6 @@ __pycache__/
 .pytest_cache/
 Testing/
 .cache/
+
+# Documentation
+docs/

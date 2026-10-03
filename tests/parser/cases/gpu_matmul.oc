@@ -1,0 +1,11 @@
+function main() -> i32 {
+    // Statically sized matrix
+    matrix<f16, 1024, 1024> A = identity();
+
+    // can auto-infer size
+    matrix<f16> B = A * 2.5;
+    
+    matrix<f16, 1024, 1024> C = A * B;
+
+    return 0;
+}

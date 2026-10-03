@@ -1,0 +1,9 @@
+function main() -> i32 {
+    f32 val = 0.0;
+    do {
+        printf("Enter a nonzero val: ");
+        val = input();
+    } until (val is not 0.0);
+    printf("Accepted: %.2f\n", val);
+    return 0;
+}

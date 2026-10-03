@@ -1,0 +1,7 @@
+errors_toplevel.oc:1:1: error: expected 'function' but found 'i32'
+ 1 | i32 x = 1;
+   | ^~~
+errors_toplevel.oc:5:1: error: expected 'function' or end of input but found '}'
+ 5 | }
+   | ^
+errors_toplevel.oc:8:1: error: expected an expression but found end of input

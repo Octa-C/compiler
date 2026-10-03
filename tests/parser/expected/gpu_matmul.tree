@@ -1,0 +1,144 @@
+Program
+  <FUNCTION,>
+  <IDENTIFIER, main>
+  <LPAREN,>
+  Params (empty)
+  <RPAREN,>
+  <ARROW,>
+  Type
+    <SCALAR, i32>
+  <LBRACE,>
+  Stmts
+    StmtsP
+      Stmt
+        Type
+          <MATRIX,>
+          <LESS,>
+          <SCALAR, f16>
+          TypeP2
+            <COMMA,>
+            <INT, 1024>
+            <COMMA,>
+            <INT, 1024>
+            <GREATER,>
+        <IDENTIFIER, A>
+        <ASSIGNMENT, =>
+        Expr
+          AndExpr
+            NotExpr
+              Comp
+                Sum
+                  Product
+                    Operand
+                      IndexedData
+                        Data
+                          <IDENTIFIER, identity>
+                          DataP
+                            <LPAREN,>
+                            Args (empty)
+                            <RPAREN,>
+                        IndexedDataP (empty)
+                    ProductP (empty)
+                  SumP (empty)
+                CompP (empty)
+            AndExprP (empty)
+          ExprP (empty)
+        <SEMICOLON,>
+      StmtsP
+        Stmt
+          Type
+            <MATRIX,>
+            <LESS,>
+            <SCALAR, f16>
+            TypeP2
+              <GREATER,>
+          <IDENTIFIER, B>
+          <ASSIGNMENT, =>
+          Expr
+            AndExpr
+              NotExpr
+                Comp
+                  Sum
+                    Product
+                      Operand
+                        IndexedData
+                          Data
+                            <IDENTIFIER, A>
+                            DataP (empty)
+                          IndexedDataP (empty)
+                      ProductP
+                        <STAR_SLASH_MOD, *>
+                        Operand
+                          IndexedData
+                            Data
+                              <FLOAT, 2.5>
+                            IndexedDataP (empty)
+                        ProductP (empty)
+                    SumP (empty)
+                  CompP (empty)
+              AndExprP (empty)
+            ExprP (empty)
+          <SEMICOLON,>
+        StmtsP
+          Stmt
+            Type
+              <MATRIX,>
+              <LESS,>
+              <SCALAR, f16>
+              TypeP2
+                <COMMA,>
+                <INT, 1024>
+                <COMMA,>
+                <INT, 1024>
+                <GREATER,>
+            <IDENTIFIER, C>
+            <ASSIGNMENT, =>
+            Expr
+              AndExpr
+                NotExpr
+                  Comp
+                    Sum
+                      Product
+                        Operand
+                          IndexedData
+                            Data
+                              <IDENTIFIER, A>
+                              DataP (empty)
+                            IndexedDataP (empty)
+                        ProductP
+                          <STAR_SLASH_MOD, *>
+                          Operand
+                            IndexedData
+                              Data
+                                <IDENTIFIER, B>
+                                DataP (empty)
+                              IndexedDataP (empty)
+                          ProductP (empty)
+                      SumP (empty)
+                    CompP (empty)
+                AndExprP (empty)
+              ExprP (empty)
+            <SEMICOLON,>
+          StmtsP
+            Stmt
+              <RETURN,>
+              Expr
+                AndExpr
+                  NotExpr
+                    Comp
+                      Sum
+                        Product
+                          Operand
+                            IndexedData
+                              Data
+                                <INT, 0>
+                              IndexedDataP (empty)
+                          ProductP (empty)
+                        SumP (empty)
+                      CompP (empty)
+                  AndExprP (empty)
+                ExprP (empty)
+              <SEMICOLON,>
+            StmtsP (empty)
+  <RBRACE,>
+  ProgramP (empty)

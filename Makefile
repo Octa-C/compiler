@@ -1,20 +1,47 @@
-CXX      = g++
-WARNINGS = -Wall -Wextra -Wpedantic -Wshadow -Wconversion -Wsign-conversion \
-           -Wold-style-cast -Wnon-virtual-dtor -Woverloaded-virtual \
-           -Wmissing-declarations -Wzero-as-null-pointer-constant -Wextra-semi
-CXXFLAGS = -std=c++17 $(WARNINGS) -O2
-CPPFLAGS = -Ilexer/include -Iutils/include -MMD -MP
+CXX       = g++
+
+WARNINGS  = -Wall
+WARNINGS += -Wextra
+WARNINGS += -Wpedantic
+WARNINGS += -Wshadow
+WARNINGS += -Wconversion
+WARNINGS += -Wsign-conversion
+WARNINGS += -Wold-style-cast
+WARNINGS += -Wnon-virtual-dtor
+WARNINGS += -Woverloaded-virtual
+WARNINGS += -Wmissing-declarations
+WARNINGS += -Wzero-as-null-pointer-constant
+WARNINGS += -Wextra-semi
+
+CXXFLAGS  = -std=c++17
+CXXFLAGS += $(WARNINGS)
+CXXFLAGS += -O2
+
+CPPFLAGS  = -Ilexer/include
+CPPFLAGS += -Iparser/include
+CPPFLAGS += -Iutils/include
+CPPFLAGS += -MMD
+CPPFLAGS += -MP
 
 ifeq ($(OS),Windows_NT)
   EXE = .exe
 endif
 
 PYTHON ?= $(if $(wildcard .venv/bin/python),.venv/bin/python,python3)
-TARGET = build/octacc$(EXE)
-SRCS   = main.cpp $(wildcard lexer/src/*.cpp) $(wildcard utils/src/*.cpp)
-OBJS   = $(SRCS:%.cpp=build/%.o)
-DEPS   = $(OBJS:.o=.d)
-FORMAT = main.cpp $(wildcard lexer/*/*.hpp lexer/*/*.cpp utils/*/*.hpp utils/*/*.cpp)
+TARGET  = build/octacc$(EXE)
+
+SRCS    = main.cpp
+SRCS   += $(wildcard lexer/src/*.cpp)
+SRCS   += $(wildcard parser/src/*.cpp)
+SRCS   += $(wildcard utils/src/*.cpp)
+
+OBJS    = $(SRCS:%.cpp=build/%.o)
+DEPS    = $(OBJS:.o=.d)
+
+FORMAT  = main.cpp
+FORMAT += $(wildcard lexer/*/*.hpp lexer/*/*.cpp)
+FORMAT += $(wildcard parser/*/*.hpp parser/*/*.cpp)
+FORMAT += $(wildcard utils/*/*.hpp utils/*/*.cpp)
 
 .PHONY: all test format clean
 
